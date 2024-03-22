@@ -33,10 +33,16 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result){                 // cuando es validacion se ponde <?>
-        if (result.hasFieldErrors()) {
+        if (result.hasFieldErrors()) {                                                                     //? PRIVADO SI NO AUTENTICA
             return validation(result);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(uService.save(user));
+    }
+
+    @PostMapping("/register")                                                                              //? PUBLICA
+    public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result){                 
+        user.setAdmin(false);
+        return create(user, result);
     }
 
     private ResponseEntity<?> validation(BindingResult result) {
@@ -51,4 +57,5 @@ public class UserController {
         ////return ResponseEntity.status(400).body(errors);
     }
 
+    
 }

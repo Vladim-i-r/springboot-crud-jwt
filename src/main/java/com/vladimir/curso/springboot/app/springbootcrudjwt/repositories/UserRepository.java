@@ -6,5 +6,6 @@ import com.vladimir.curso.springboot.app.springbootcrudjwt.entities.User;
 
 public interface UserRepository extends CrudRepository<User, Long>{
 
+    boolean existsByUsername(String username);
     
 } 

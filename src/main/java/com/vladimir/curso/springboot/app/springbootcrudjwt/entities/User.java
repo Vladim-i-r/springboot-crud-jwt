@@ -1,8 +1,11 @@
 package com.vladimir.curso.springboot.app.springbootcrudjwt.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vladimir.curso.springboot.app.springbootcrudjwt.validation.ExistByUsername;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,6 +30,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ExistByUsername
     @Column(unique = true)
     @NotBlank
     @Size(min = 4, max = 12)
@@ -35,7 +39,12 @@ public class User {
     @NotBlank
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)              //? Solo cuando se usa, el @JsonIgnore, no permite ni leer ni escribir
     private String password;
+    
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private boolean admin;                      //! Es un campo que no es de persistencia, que no es de la tabla
 
+    @JsonIgnoreProperties({"users","handler","hibernateLazyInitializer"}) //? ESTO ES PARA EVITAR UN CICLO INFINITO, YA QUE LOS ROLES MANDAN LLAMAR USERS
     @ManyToMany                                                         //? UNIDIRECCIONAL, ESTA APP SOLO REQUIERE SABER LOS ROLES DE CADA USUARIO Y NO OBTENER LOS USUARIOS POR ROLES
     @JoinTable(
         name="users_roles",                                             //? SE MAPEA LA TABLA INTERMEDIA
@@ -46,6 +55,10 @@ public class User {
     )
     private List<Role> roles;
 
+    public User(){                                                          // Este constructor vacio sirve cuando es bididreccional la relacion de tablas
+        roles=new ArrayList<>();
+    }
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean enable;
 
@@ -54,8 +67,6 @@ public class User {
         enable=true;
     }
 
-    @Transient
-    private boolean admin;                      //! Es un campo que no es de persistencia, que no es de la tabla
 
     public Long getId() {
         return id;
@@ -103,6 +114,39 @@ public class User {
 
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+
+
+    @Override           //SE AGREAG ESTO CUANDO ES RELACION BIDIRECCIONAL
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        return true;
     }
 
     
