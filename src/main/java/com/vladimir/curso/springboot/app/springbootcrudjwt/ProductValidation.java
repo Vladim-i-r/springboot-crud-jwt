@@ -10,13 +10,13 @@ import com.vladimir.curso.springboot.app.springbootcrudjwt.entities.Product;
 @Component
 public class ProductValidation implements Validator{
 
-    //@SuppressWarnings("null")
+    @SuppressWarnings("null")
     @Override
     public boolean supports(Class<?> clazz) {
         return Product.class.isAssignableFrom(clazz);    // PARA VALIDAR DE FORMA PROGRAMAGTICA
     }
 
-    //@SuppressWarnings("null")
+    @SuppressWarnings("null")
     @Override
     public void validate(Object target, Errors errors) {
         Product product = (Product) target;
