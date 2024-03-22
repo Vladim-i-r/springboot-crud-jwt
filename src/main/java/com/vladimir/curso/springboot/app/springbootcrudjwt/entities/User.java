@@ -2,6 +2,8 @@ package com.vladimir.curso.springboot.app.springbootcrudjwt.entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
@@ -30,6 +33,7 @@ public class User {
     private String username;
 
     @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)              //? Solo cuando se usa, el @JsonIgnore, no permite ni leer ni escribir
     private String password;
 
     @ManyToMany                                                         //? UNIDIRECCIONAL, ESTA APP SOLO REQUIERE SABER LOS ROLES DE CADA USUARIO Y NO OBTENER LOS USUARIOS POR ROLES
@@ -41,6 +45,14 @@ public class User {
         
     )
     private List<Role> roles;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private boolean enable;
+
+    @PrePersist
+    public void prePersist(){
+        enable=true;
+    }
 
     @Transient
     private boolean admin;                      //! Es un campo que no es de persistencia, que no es de la tabla
@@ -83,6 +95,14 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     
