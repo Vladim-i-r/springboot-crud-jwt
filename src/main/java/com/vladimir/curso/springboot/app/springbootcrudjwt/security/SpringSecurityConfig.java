@@ -19,7 +19,7 @@ public class SpringSecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{         //* Esto es que para que la pagina de users sea publica y se ppuedan crear/listar ya que spring security lo protege */
         return http.authorizeHttpRequests((authz)-> authz
-        .requestMatchers("/users").permitAll()
+        .requestMatchers("/api/users").permitAll()
         .anyRequest().authenticated())
         .csrf(config -> config.disable())
         .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

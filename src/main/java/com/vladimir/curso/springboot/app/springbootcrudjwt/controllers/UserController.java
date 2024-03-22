@@ -20,7 +20,7 @@ import com.vladimir.curso.springboot.app.springbootcrudjwt.services.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
