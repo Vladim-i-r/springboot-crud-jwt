@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,11 +35,13 @@ public class ProductController {
     // private ProductValidation validation;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public List<Product> list(){
         return service.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<?> view(@PathVariable Long id){
         Optional<Product> productOptional = service.findById(id);
         if (productOptional.isPresent()) {
@@ -47,6 +50,7 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody Product product, BindingResult result){   //? El requestbody es la estructura json que recibira
        // validation.validate(product, result);  // Esto es otra manera de validar, mediante otra clase ProductValidation y no messages.propeties
@@ -58,6 +62,7 @@ public class ProductController {
 
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Product product, BindingResult result,  @PathVariable Long id){  //! El binding debe estar al lado del objeto a validar, product en este caso
         if (result.hasFieldErrors()) {
@@ -71,7 +76,7 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         

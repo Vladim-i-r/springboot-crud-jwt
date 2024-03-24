@@ -7,7 +7,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,8 @@ import com.vladimir.curso.springboot.app.springbootcrudjwt.services.UserService;
 
 import jakarta.validation.Valid;
 
+            //originPatterns = "*"      TODAS
+@CrossOrigin(origins = "http://localhost:4200")   //! PERMITIR CONEXION CON FRONTEND
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -31,6 +35,7 @@ public class UserController {
         return uService.findAll();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")  //? OTRA MANERA DE ASIGNAR PERMISOS PERO CON ANOTACIONES, EN LUGAR DE PONERLO EN SPRINGSECURITYCONFIG
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result){                 // cuando es validacion se ponde <?>
         if (result.hasFieldErrors()) {                                                                     //? PRIVADO SI NO AUTENTICA
